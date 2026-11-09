@@ -4,13 +4,13 @@ Proyecto final de Programación I de la Universidad de Manizales. El sistema per
 
 **Único integrante:** Diego Andrés Echeverry Giraldo.
 
-**Avance actual: Parte 5 — Programa principal y demostración completa.** El sistema ya se puede ejecutar desde main.py para observar casos normales, polimorfismo y las tres excepciones personalizadas. La documentación definitiva y la revisión integral corresponden a la versión final.
+**Avance actual: Parte 5 ampliada — Menú interactivo y demostración académica.** El sistema permite gestionar reservas desde main.py y ejecutar una demostración independiente como opción del menú. La documentación definitiva y la revisión integral corresponden a la versión final.
 
 ## Problema y alcance
 
 El restaurante necesita evitar reservas simultáneas de una misma mesa, respetar su capacidad y comunicar qué debe prepararse antes de la llegada de los clientes. Una celebración puede necesitar decoración y una reunión corporativa puede requerir equipo audiovisual; una reserva habitual necesita una preparación básica.
 
-La aplicación de consola en Python mantiene datos en memoria y ejecuta casos de demostración reproducibles. Administra clientes, mesas y reservas. Permite registrar, consultar y cancelar reservas, y mostrar la preparación y duración de cada una. No necesita una base de datos, una interfaz gráfica ni servicios externos para demostrar los requisitos académicos.
+La aplicación de consola en Python mantiene datos en memoria y ofrece un menú para administrar clientes, mesas y reservas. Permite registrar, consultar, listar y cancelar reservas, consultar disponibilidad y mostrar la preparación y duración de cada reserva. También incluye casos de demostración reproducibles. No necesita una base de datos, una interfaz gráfica ni servicios externos.
 
 ## Diseño propuesto
 
@@ -131,9 +131,35 @@ El restaurante obtiene las duraciones con `calcular_duracion()` sin seleccionar 
 
 Las tres heredan directamente de `Exception`. Los datos mal formados y registros duplicados mantienen `TypeError` o `ValueError`. La Parte 5 captura explícitamente cada excepción en main.py y ejecuta una operación válida después de cada caso.
 
-## Parte 5 — Programa principal y demostración completa
+## Parte 5 ampliada — Menú interactivo y demostración académica
 
-El archivo `main.py`, ubicado en la raíz del proyecto, ejecuta una demostración automática documentada línea por línea. No solicita entradas ni ofrece un menú interactivo. La función `main()` crea datos nuevos en cada ejecución y el bloque `if __name__ == "__main__"` evita que la demostración se ejecute al importar el archivo.
+El archivo `main.py`, ubicado en la raíz del proyecto, abre un menú interactivo documentado línea por línea. La función `main()` conserva el mismo Restaurante durante la sesión. El bloque `if __name__ == "__main__"` evita que el menú se ejecute al importar el archivo.
+
+| Opción | Operación |
+| --- | --- |
+| 1 | Registrar un cliente con identificador y nombre. |
+| 2 | Registrar una mesa con número, capacidad y ubicación. |
+| 3 | Crear una reserva habitual, de celebración o corporativa. |
+| 4 | Consultar una reserva por su identificador. |
+| 5 | Listar todas las reservas, incluidas las canceladas. |
+| 6 | Cancelar una reserva y liberar su horario. |
+| 7 | Consultar disponibilidad de una mesa para un inicio y duración total. |
+| 8 | Ejecutar la demostración académica con datos independientes. |
+| 0 | Salir. |
+
+La sesión comienza sin clientes, mesas ni reservas. Primero se registra al menos un cliente y una mesa con las opciones 1 y 2. Después, la opción 3 permite elegir el tipo de reserva, ingresar su código, seleccionar un cliente y una mesa registrados, e indicar inicio y personas. Según el tipo elegido se solicita preferencia de ubicación, motivo y decoración, o minutos de reunión y equipo audiovisual.
+
+Las fechas se ingresan como `AAAA-MM-DD HH:MM`, por ejemplo `2026-11-15 12:00`, usando la hora local sin zona horaria adjunta. Para decoración y equipo se acepta `s`, `si`, `sí`, `n` o `no`, sin distinguir mayúsculas. La opción 7 solicita la duración total en minutos, incluidos los tiempos adicionales que se quieran reservar.
+
+Los campos vacíos, enteros no positivos, fechas inexistentes y respuestas de sí/no inválidas se vuelven a solicitar. Los duplicados, conflictos de horario, excesos de capacidad y reservas inexistentes muestran un mensaje y devuelven al menú. Una operación rechazada no borra los registros anteriores. El listado y la consulta muestran fechas completas, cliente, mesa, personas, estado, duración y preparación mediante los métodos de cada reserva.
+
+Las condiciones que eligen qué clase construir corresponden a la selección del usuario. La presentación de reservas utiliza el contrato común y no decide qué método ejecutar según la clase del objeto.
+
+Los datos permanecen únicamente en memoria mientras el programa sigue abierto. Salir con 0, cerrar la entrada o interrumpirla termina la sesión sin guardar datos en disco.
+
+### Demostración académica desde la opción 8
+
+La función `ejecutar_demostracion()` conserva el ejemplo automático original y crea otro Restaurante. Puede ejecutarse varias veces; no carga, cancela ni reemplaza las reservas que el usuario haya ingresado en el menú. Al terminar devuelve el control al menú.
 
 Se crean inicialmente ocho objetos del dominio: un Restaurante, dos clientes, dos mesas y tres reservas de tipos diferentes. Cada reserva crea además su propio PlanAtencion. El segundo cliente es ficticio y se identifica como Cliente de ejemplo.
 
@@ -149,7 +175,7 @@ La lista `reservas` contiene las tres especializaciones. Un único ciclo registr
 
 La demostración provoca tres situaciones anormales y captura cada excepción por separado: intenta crear una reserva de cinco personas para la mesa de cuatro, registrar una reserva que se cruza con RES-001 y cancelar un identificador inexistente. Después de los dos primeros casos realiza búsquedas exitosas. Después del tercero cancela RES-001 y comprueba que su horario quedó libre.
 
-Al terminar quedan tres reservas registradas: dos activas y una cancelada. Los intentos rechazados no se incorporan al registro. El programa muestra el estado conservado de la reserva cancelada y un mensaje de finalización. Los datos no se guardan al cerrar el proceso.
+Al terminar la demostración quedan tres reservas de ejemplo registradas: dos activas y una cancelada. Los intentos rechazados no se incorporan al registro. El programa muestra el estado conservado de la reserva cancelada y un mensaje de finalización antes de volver al menú. Estos registros de ejemplo no se incorporan a la sesión interactiva.
 
 ## Entregas por partes
 
@@ -159,7 +185,7 @@ Al terminar quedan tres reservas registradas: dos activas y una cancelada. Los i
 | Parte 2 | Reserva abstracta y PlanAtencion con composición | Implementada localmente |
 | Parte 3 | Tres reservas especializadas y dos métodos sobrescritos en cada una | Implementada localmente |
 | Parte 4 | Restaurante, disponibilidad y excepciones del dominio | Implementada localmente |
-| Parte 5 | main.py, demostración normal y excepcional, y verificaciones | Implementada localmente |
+| Parte 5 ampliada | main.py, menú interactivo y demostración normal y excepcional | Implementada localmente |
 | Versión final | UML actualizado, documento de decisiones y revisión de entrega | Pendiente |
 
 Las entregas serán acumulativas: se conservará una sola estructura de carpetas y cada parte agregará los cambios sobre la anterior. El historial de commits conservará las versiones; no se duplicará el proyecto en carpetas llamadas Parte 1, Parte 2, etc. Este README se actualizará en cada entrega.
@@ -176,7 +202,23 @@ Abre una terminal en la carpeta raíz del proyecto, donde se encuentra main.py, 
 python main.py
 ```
 
-La salida muestra las tres reservas, las duraciones 1:30:00, 2:30:00 y 1:15:00, sus preparaciones, los tres errores controlados y una operación exitosa posterior a cada uno. Finaliza con estas líneas:
+Al iniciar aparece el siguiente menú:
+
+```text
+1. Registrar cliente
+2. Registrar mesa
+3. Crear reserva
+4. Consultar reserva
+5. Listar reservas
+6. Cancelar reserva
+7. Consultar disponibilidad
+8. Ejecutar demostración académica
+0. Salir
+```
+
+Para gestionar tus propias reservas, registra un cliente con 1, una mesa con 2 y crea una reserva con 3. Puedes consultarla con 4, listarla con 5, cancelarla con 6 y revisar disponibilidad con 7. Usa 0 para salir.
+
+Para observar los casos académicos, elige 8. La demostración muestra las tres reservas, las duraciones 1:30:00, 2:30:00 y 1:15:00, sus preparaciones, los tres errores controlados y una operación exitosa posterior a cada uno. Su resumen termina con estas líneas y después vuelve a aparecer el menú:
 
 ```text
 RESULTADO FINAL
