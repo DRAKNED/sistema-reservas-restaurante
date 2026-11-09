@@ -2,9 +2,9 @@
 
 Proyecto final de Programación I de la Universidad de Manizales. El sistema permitirá organizar reservas, asignar mesas y determinar la preparación necesaria para atender reservas habituales, celebraciones y reuniones corporativas.
 
-**Integrante:** Diego Andrés Echeverry Giraldo.
+**Único integrante:** Diego Andrés Echeverry Giraldo.
 
-**Avance actual: Parte 1 — Clientes y mesas.** Las clases están implementadas y verificadas localmente. El sistema completo de reservas continúa en desarrollo.
+**Avance actual: Parte 2 — Reserva abstracta y plan de atención.** Se incorporaron la base común de las reservas y su composición con un plan propio. El sistema completo de reservas continúa en desarrollo.
 
 ## Problema y alcance
 
@@ -38,12 +38,39 @@ Los textos se guardan sin espacios externos. Los tipos incorrectos generan `Type
 
 Los atributos internos usan doble guion bajo y se consultan mediante propiedades sin setters. La reasignación directa a estas propiedades genera `AttributeError`. El doble guion bajo dificulta accesos accidentales; no constituye una barrera de seguridad. El método estático interno de Mesa reutiliza la validación de enteros positivos.
 
+## Parte 2 — Reserva abstracta y plan de atención
+
+Esta entrega agrega dos archivos documentados línea por línea y conserva las clases Cliente y Mesa de la Parte 1.
+
+| Archivo | Contenido implementado |
+| --- | --- |
+| `restaurante/reserva.py` | Clase abstracta Reserva, asociaciones con Cliente y Mesa, estado y creación del plan propio. |
+| `restaurante/plan_atencion.py` | Clase PlanAtencion para agregar tareas y consultarlas sin exponer su lista interna. |
+
+### Clase abstracta Reserva
+
+`Reserva` hereda de `ABC` y utiliza `@abstractmethod` para exigir los métodos `calcular_duracion()` y `describir_preparacion()`. No se puede instanciar directamente ni crear una hija que deje alguno de estos métodos sin implementar. Las tres especializaciones del proyecto se incorporarán en la Parte 3.
+
+Su constructor recibe `identificador`, `cliente`, `mesa`, `inicio` y `personas`. El código debe ser un texto no vacío, cliente y mesa deben ser objetos de sus clases correspondientes, el inicio debe ser un `datetime` y las personas deben ser una cantidad entera positiva que no supere la capacidad. Se reutiliza `Mesa.admite()` para validar esta cantidad. Por ahora, exceder la capacidad genera `ValueError`; se reemplazará por `CapacidadExcedidaError` en la Parte 4.
+
+Las propiedades de lectura son `identificador`, `cliente`, `mesa`, `inicio`, `personas`, `estado` y `plan_atencion`. Las asociaciones conservan los objetos Cliente y Mesa existentes; no los duplican. El estado inicial es `activa`; `cancelar()` lo cambia a `cancelada` y puede repetirse sin producir otro cambio. El estado no implica que la reserva ya esté registrada en un restaurante.
+
+El contrato de `calcular_duracion()` establece un resultado `timedelta` positivo. El de `describir_preparacion()` establece un texto que dependerá de los datos de cada especialización. El constructor base no llama a estos métodos porque las hijas aún deben inicializar sus datos propios.
+
+### Composición con PlanAtencion
+
+Cada reserva crea internamente un `PlanAtencion()` vacío y exclusivo. No recibe un plan externo ni proporciona un setter para reemplazarlo. La reserva **tiene un plan**; no es un plan, por lo que corresponde composición y no herencia.
+
+`agregar_tarea(tarea)` acepta texto no vacío, elimina sus espacios externos y conserva el orden de incorporación. `consultar_tareas()` devuelve una tupla con las tareas actuales: quien consulta no recibe la lista mutable interna. Dos reservas mantienen planes y listas independientes. Cancelar una reserva conserva su plan como parte de sus datos.
+
+Las tareas concretas se agregarán desde las clases especializadas en la Parte 3. La disponibilidad de horarios se incorporará con Restaurante en la Parte 4.
+
 ## Entregas por partes
 
 | Entrega | Resultado verificable | Estado |
 | --- | --- | --- |
 | Parte 1 | Cliente, Mesa, validaciones, comentarios línea por línea y README | Implementada localmente |
-| Parte 2 | Reserva abstracta y PlanAtencion con composición | Pendiente |
+| Parte 2 | Reserva abstracta y PlanAtencion con composición | Implementada localmente |
 | Parte 3 | Tres reservas especializadas y dos métodos sobrescritos en cada una | Pendiente |
 | Parte 4 | Restaurante, disponibilidad y excepciones del dominio | Pendiente |
 | Parte 5 | main.py, demostración normal y excepcional, y verificaciones | Pendiente |
@@ -55,7 +82,7 @@ Antes de implementar cada parte se presentarán sus archivos y alcance para apro
 
 ## Ejecución
 
-La Parte 1 se verificó con **Python 3.12.14** y no requiere paquetes externos. Todavía no existe `main.py`; se añadirá en la Parte 5. Por ahora las clases se pueden comprobar desde el intérprete.
+Las Partes 1 y 2 utilizan **Python 3.12.14** y no requieren paquetes externos. Todavía no existe `main.py`; se añadirá en la Parte 5. Por ahora las clases se pueden comprobar desde el intérprete.
 
 Abre una terminal en la carpeta raíz del proyecto y ejecuta:
 
@@ -95,59 +122,23 @@ False
 Diego Echeverry
 ```
 
-## Verificación de la Parte 1
+Para utilizar PlanAtencion de forma aislada desde el mismo intérprete:
 
-Se ejecutaron 71 comprobaciones de creación, limpieza de espacios, actualización de nombres, conservación de datos ante cambios inválidos, límites de capacidad, rechazo de tipos y valores incorrectos y propiedades de lectura.
-
-Después de documentar línea por línea se volvieron a comprobar los comportamientos principales y se verificaron comentarios explicativos para las 43 instrucciones. Las comprobaciones se ejecutaron en el entorno de desarrollo; todavía no se incluye una suite de pruebas automatizadas en el repositorio.
-
-## Verificación prevista
-
-- Crear al menos ocho objetos para demostrar el funcionamiento, sin depender del conteo de excepciones.
-- Recorrer una única colección con los tres tipos de reserva e invocar ambos métodos mediante un único ciclo, sin decidir su comportamiento con condicionales por tipo.
-- Registrar reservas válidas y comprobar límites de horario y capacidad.
-- Provocar y capturar individualmente `MesaNoDisponibleError`, `CapacidadExcedidaError` y `ReservaNoEncontradaError` desde el programa principal.
-- Mostrar una operación exitosa después de cada excepción para evidenciar que la ejecución continúa.
-
-## Documentación de entrega
-
-El repositorio final contendrá el código organizado y documentado, `main.py`, este README, el diagrama UML de clases y el Documento de Decisiones de Diseño. El documento técnico se redactará con portada, introducción, descripción de la solución, decisiones relacionadas entre sí, conclusiones y referencias o herramientas consultadas cuando corresponda.
-
-La guía menciona información solicitada para el README, pero no ofrece una lista adicional de campos. Por ello este archivo cubre autoría, problema, alcance, diseño, estado, ejecución, verificación y entregables; se actualizará conforme avance el código.
-
-## Uso de inteligencia artificial
-
-Se utilizó ChatGPT/Codex para analizar los requisitos, proponer el diseño, generar las clases Cliente y Mesa, documentarlas línea por línea y ejecutar comprobaciones. Por solicitud del integrante se amplió la documentación y se organizaron las entregas por partes. El documento final registrará las herramientas utilizadas, las propuestas modificadas o descartadas y las verificaciones efectivamente realizadas. El autor deberá comprender y explicar todo el trabajo entregado.
-
-## GitHub
-
-Repositorio público: [DRAKNED/sistema-reservas-restaurante](https://github.com/DRAKNED/sistema-reservas-restaurante).
-
-La participación de Diego deberá evidenciarse mediante al menos un commit de desarrollo atribuido correctamente a su identidad Git.
-
-### Archivos para subir en la Parte 1
-
-```text
-sistema-reservas-restaurante/
-├── README.md
-├── .gitignore
-├── restaurante/
-│   ├── __init__.py
-│   ├── cliente.py
-│   └── mesa.py
-└── docs/
-    ├── ANALISIS.md
-    └── UML.md
+```python
+# Importa la clase que organiza las tareas de preparación.
+from restaurante.plan_atencion import PlanAtencion
+# Crea un plan vacío para explorar sus operaciones.
+plan = PlanAtencion()
+# Agrega una descripción de preparación al plan.
+plan.agregar_tarea("Preparar la mantelería")
+# Consulta las tareas mediante una tupla que no expone la lista interna.
+print(plan.consultar_tareas())
 ```
 
-Se subirán estos siete archivos conservando sus rutas. El README debe quedar en la raíz del repositorio, junto a las carpetas restaurante y docs. No se debe subir la carpeta interna `.git`, los entornos virtuales ni los archivos de caché.
-
-ANALISIS.md y UML.md contienen el diseño inicial del proyecto completo, previo a la numeración por partes. El UML es un borrador: sus clases pendientes no están implementadas en esta entrega.
-
-Mensaje sugerido para el commit de esta entrega:
+Salida esperada:
 
 ```text
-Parte 1: implementar clientes y mesas con documentación línea por línea
+('Preparar la mantelería',)
 ```
 
-El repositorio público está creado. Este README no afirma que los archivos ya se hayan publicado; la publicación se verificará por separado después de su aprobación.
+Este ejemplo aislado ilustra las operaciones del plan. En las reservas, el plan lo creará el constructor de Reserva por composición. La demostración con los tipos concretos de reserva se incorporará a partir de la Parte 3.
