@@ -1,18 +1,18 @@
-# Análisis de la actividad y propuesta del restaurante
+# Análisis y cumplimiento del sistema de reservas
 
 ## Fuente y decisiones del integrante
 
-Se revisó íntegramente el contenido textual de «Actividad colaborativa N°3. Proyecto Final.docx», incluyendo objetivo, contexto, requisitos, entregables, documento de diseño y reglas sobre IA. Esta matriz traduce la guía académica en evidencias que construiremos; no afirma que ya estén implementadas.
+Se revisó íntegramente el contenido textual de «Actividad colaborativa N°3. Proyecto Final.docx», incluyendo objetivo, contexto, requisitos, entregables, documento de diseño y reglas sobre IA. Esta actualización relaciona los requisitos con el código local terminado hasta la Parte 5 ampliada. Distingue la implementación de los documentos pendientes y de la publicación en GitHub.
 
 El usuario seleccionó restaurante, indicó que el docente no ha trabajado este contexto, definió a Diego Andrés Echeverry Giraldo como único integrante y pidió construir el código parte por parte, subir avances a GitHub e incluir README.md. La guía habla de equipos; la autoría de este proyecto se documentará de forma individual conforme a esa indicación.
 
 El objetivo académico es integrar los conceptos de programación orientada a objetos en Python. La guía excluye biblioteca, librería, préstamos bibliográficos, tienda, comercio, ventas, inventario comercial, gestión académica y cualquier contexto ya trabajado por el docente. Restaurante figura expresamente entre las opciones sugeridas. La solución propuesta se centra en reservas y atención, sin convertir el proyecto en un sistema de ventas.
 
-## Solución propuesta
+## Solución implementada
 
-Una aplicación de consola permitirá registrar clientes y mesas, crear reservas y consultar o cancelar las existentes. Antes de confirmar una reserva se comprobará la capacidad y disponibilidad de su mesa. La preparación y duración dependerán del propósito de la reserva.
+Una aplicación de consola permite registrar clientes y mesas, crear los tres tipos de reserva, consultar y listar reservas, cancelarlas y comprobar disponibilidad por horarios. La capacidad se valida en el constructor de Reserva y los conflictos horarios se comprueban antes de incorporar la reserva al registro de Restaurante. La preparación y duración dependen de su especialización. Los datos se mantienen en memoria durante la sesión.
 
-| Clase | Tipo | Responsabilidad y datos propios propuestos |
+| Clase | Tipo | Responsabilidad y datos propios implementados |
 | --- | --- | --- |
 | Reserva | Abstracta | Reunir identificador, cliente, mesa, inicio, personas y estado; definir calcular_duracion() y describir_preparacion(). |
 | ReservaHabitual | Concreta, hija de Reserva | Atender una visita habitual; preferencia de ubicación y preparación básica. |
@@ -23,58 +23,66 @@ Una aplicación de consola permitirá registrar clientes y mesas, crear reservas
 | PlanAtencion | Concreta | Mantener y consultar tareas de preparación pertenecientes exclusivamente a una reserva. |
 | Restaurante | Concreta | Administrar colecciones de clientes, mesas y reservas; comprobar disponibilidad y coordinar registro, consulta y cancelación. |
 
-Las fórmulas exactas de duración y los valores de ejemplo se definirán al implementar las especializaciones. No son reglas exigidas por la actividad ni políticas reales de un restaurante.
+Las reglas aprobadas para la demostración son: visita habitual de 90 minutos; celebración de 120 minutos más 30 si requiere decoración; reunión corporativa de la duración solicitada más 15 minutos si requiere equipo audiovisual. Son reglas del proyecto, no fórmulas exigidas por la guía ni políticas atribuidas a un restaurante real.
 
 ## Matriz de cumplimiento
 
-| Exigencia de la actividad | Evidencia prevista | Etapa |
+| Exigencia de la actividad | Evidencia concreta | Estado local |
 | --- | --- | --- |
-| Solución orientada a objetos en Python y contexto diferente | Gestión de reservas y atención en restaurante, confirmado como contexto no trabajado | 0–5 |
-| Mínimo seis clases concretas | Siete clases concretas descritas arriba, sin contar excepciones | 1–4 |
-| Una clase abstracta | Reserva usará ABC y métodos abstractos; no se podrá instanciar | 2 |
-| Tres clases con un ancestro común | ReservaHabitual, ReservaCelebracion y ReservaCorporativa heredan de Reserva | 3 |
-| Constructores donde se requieran | Inicialización y validación de datos obligatorios en cada entidad | 1–4 |
-| Encapsulamiento de atributos | Atributos internos, propiedades de lectura y cambios mediante operaciones validadas; no exponer listas internas mutables | 1–4 |
-| Métodos propios de las entidades | Operaciones correspondientes a las responsabilidades de cada clase | 1–4 |
-| Dos métodos sobrescritos por las tres hijas | Cada hija implementará calcular_duracion() y describir_preparacion(), con datos y resultados propios | 3 |
-| Herencia justificada como “es un” | Cada especialización es una reserva y mantiene el contrato general | 2–3 y 6 |
-| Una colección heterogénea y un único ciclo | En main.py, una lista de reservas de los tres tipos; un for invocará ambos métodos | 5 |
-| Sin condicionales para elegir métodos por tipo | No usar isinstance, type ni comparaciones de nombres de clase para despachar los métodos polimórficos | 3–5 |
-| Dos relaciones entre objetos | Reserva se asocia con Cliente y Mesa; Restaurante coordina las entidades | 2–4 |
-| Una composición y su justificación | Reserva crea su propio PlanAtencion, no lo recibe prestado ni lo comparte; una reserva tiene un plan, no es un plan | 2 y 6 |
-| Tres excepciones personalizadas | MesaNoDisponibleError, CapacidadExcedidaError y ReservaNoEncontradaError | 4 |
-| Lanzar, capturar, explicar y continuar por cada excepción | Métodos responsables lanzan; main.py captura cada caso, imprime el mensaje y ejecuta luego otra operación válida | 4–5 |
-| Al menos ocho objetos de demostración | Como mínimo un restaurante, dos clientes, dos mesas y tres reservas: ocho, más sus planes internos | 5 |
-| Principal con casos normales y excepcionales | main.py ejecutará una demostración determinista | 5 |
-| Proyecto organizado y documentado | Paquete de dominio, excepciones separadas, principal y documentación consistente | 1–6 |
-| README.md | Archivo inicial creado; ejecución y resultados se actualizarán con evidencia real | 0–6 |
-| UML de clases | Borrador Mermaid inicial; versión final consistente con código y exportación legible | 0 y 6 |
-| Documento de Decisiones de Diseño | Documento técnico narrativo con todos los contenidos de la guía | 6 |
-| Enlace al repositorio GitHub | Crear y publicar el repositorio junto con el integrante | Desde 0 |
-| Al menos un commit por integrante | Commits reales de desarrollo atribuidos a Diego; verificar identidad antes de confirmar | Desde 1 |
-| Declaración de IA y comprensión del código | Registro del apoyo recibido, revisión de propuestas y explicación del código por el autor | Todas |
+| Solución orientada a objetos en Python y contexto diferente | Paquete restaurante; contexto confirmado por el integrante como no trabajado en clase | Implementado |
+| Mínimo seis clases concretas | Cliente, Mesa, PlanAtencion, Restaurante y tres especializaciones: siete, sin contar excepciones | Implementado |
+| Una clase abstracta | Reserva hereda de ABC y declara dos métodos con abstractmethod | Implementado |
+| Tres clases con un ancestro común | ReservaHabitual, ReservaCelebracion y ReservaCorporativa heredan de Reserva | Implementado |
+| Constructores donde se requieran | Las ocho clases del dominio inicializan sus datos; las hijas reutilizan super().__init__() | Implementado |
+| Encapsulamiento de atributos | Atributos con doble guion bajo, propiedades de lectura, cambios validados y colecciones consultadas mediante tuplas | Implementado |
+| Métodos propios de las entidades | actualizar_nombre(), admite(), agregar_tarea(), cancelar() y operaciones de registro, entre otros | Implementado |
+| Dos métodos sobrescritos por las tres hijas | Cada hija define calcular_duracion() y describir_preparacion() | Implementado |
+| Herencia justificada como “es un” | Cada especialización es una reserva, mantiene sus asociaciones y respeta el contrato de duración y preparación | Implementado; explicación técnica final pendiente |
+| Una colección heterogénea y un único ciclo | ejecutar_demostracion() en main.py crea la lista reservas y un único for invoca ambos métodos | Implementado |
+| Sin condicionales para elegir métodos por tipo | El ciclo de demostración y mostrar_reserva() usan el contrato común; los condicionales de creación solo atienden la elección del usuario | Implementado |
+| Dos relaciones entre objetos | Reserva conserva referencias al Cliente y a la Mesa asociados | Implementado |
+| Una composición y su justificación | Reserva construye PlanAtencion internamente; no admite reemplazarlo mediante una propiedad pública | Implementado; explicación técnica final pendiente |
+| Tres excepciones personalizadas | MesaNoDisponibleError, CapacidadExcedidaError y ReservaNoEncontradaError en excepciones.py | Implementado |
+| Lanzar, capturar, explicar y continuar por cada excepción | Reserva y Restaurante lanzan; ejecutar_demostracion() captura por separado y luego busca o cancela una reserva válida | Implementado |
+| Al menos ocho objetos de demostración | Un restaurante, dos clientes, dos mesas y tres reservas; sus planes son adicionales | Implementado |
+| Principal con casos normales y excepcionales | main.py ofrece menú; la opción 8 ejecuta los casos académicos con registros independientes | Implementado |
+| Proyecto organizado y documentado | Clases en archivos del paquete, principal en raíz y comentarios explicativos por instrucción | Implementado |
+| README.md | Instrucciones reales de python main.py, menú, tipos de reserva y ejemplos de uso | Actualizado; cierre pendiente del documento técnico |
+| UML de clases | docs/UML.md actualizado al código, con relaciones, excepciones, constructores y propiedades | Actualizado |
+| Documento de Decisiones de Diseño | docs/decisiones_diseno.docx con estructura y formato de la plantilla del integrante | Pendiente de recibir la plantilla |
+| Enlace al repositorio GitHub | Repositorio público DRAKNED/sistema-reservas-restaurante creado | Publicación del contenido no verificada en esta revisión |
+| Al menos un commit por integrante | Debe existir un commit de desarrollo atribuible a Diego, no solo documentación | Pendiente de verificar en GitHub; no se autorizaron nuevos commits locales |
+| Declaración de IA y comprensión del código | El documento técnico debe declarar el apoyo real y el integrante debe poder explicar todo el sistema | Pendiente de completar el documento y de revisión por el integrante |
 
-## Reglas funcionales propuestas
+## Reglas funcionales implementadas
 
-La disponibilidad se comprobará por mesa y por intervalos de fecha y hora. Dos reservas activas se cruzan si el inicio de una es anterior al final de la otra y viceversa. Se propone usar intervalos de inicio inclusivo y final exclusivo: una reserva que empieza exactamente cuando termina otra no entra en conflicto. Una reserva cancelada dejará de ocupar la mesa.
+La disponibilidad se comprueba por mesa y por intervalos de fecha y hora local sin zona horaria adjunta. Dos reservas activas se cruzan si el inicio de una es anterior al final de la otra y viceversa. El inicio es inclusivo y el final exclusivo: una reserva que empieza exactamente cuando termina otra no entra en conflicto. Una reserva cancelada deja de ocupar la mesa, pero conserva su identificador y no se elimina del registro.
 
-La cantidad de personas debe ser positiva y no superar la capacidad. Las capacidades y duraciones deben ser positivas. Se validarán identificadores, nombres y referencias a entidades registradas. Los datos mal formados podrán usar excepciones estándar de Python; las tres excepciones personalizadas cubrirán situaciones propias del restaurante.
+La cantidad de personas debe ser positiva y no superar la capacidad. Las capacidades y duraciones son positivas. Se validan identificadores, nombres y referencias a las mismas instancias de Cliente y Mesa registradas; se rechazan duplicados sin sobrescribir los datos existentes. Las reservas se guardan solo después de superar todas las validaciones. Los datos mal formados utilizan TypeError o ValueError; las tres excepciones personalizadas cubren situaciones propias del restaurante.
 
-| Excepción | Situación | Operación responsable propuesta |
+| Excepción | Situación | Operación responsable |
 | --- | --- | --- |
 | MesaNoDisponibleError | Una reserva activa ocupa la misma mesa en un horario que se cruza | Restaurante.registrar_reserva() |
 | CapacidadExcedidaError | La cantidad de asistentes supera la capacidad de la mesa | Reserva al validar sus datos |
 | ReservaNoEncontradaError | Se consulta o cancela un identificador inexistente | Restaurante.buscar_reserva(), reutilizado por cancelar_reserva() |
 
-Los nombres de métodos son una propuesta. Si cambian durante el desarrollo, se actualizarán el UML, el README y las decisiones. Se comprobará que un registro rechazado no deje reservas parciales ni altere la disponibilidad.
+El menú vuelve a solicitar campos vacíos, números no positivos, fechas inválidas y respuestas de sí/no incorrectas. Los errores de una operación se muestran antes de volver al menú conservando los datos anteriores. Se controlan también duraciones fuera del rango representable, fin de entrada e interrupción de la sesión. No se implementó persistencia en disco ni una validación que prohíba fechas pasadas.
 
 ## Composición y relaciones
 
-Cliente y Mesa existen independientemente de una reserva y pueden participar en distintas reservas. Son asociaciones, no composición. En cambio, cada reserva construirá internamente un PlanAtencion específico y controlará sus tareas. Ese plan no tendrá registro independiente ni se compartirá entre reservas. Esta propiedad y su ciclo de vida conceptual justifican la composición; no se justificará solo diciendo que una clase contiene un atributo de otra. Python gestiona la memoria automáticamente, por lo que no se necesita un destructor para demostrar esta relación.
+Cliente y Mesa existen independientemente de una reserva y pueden participar en distintas reservas. Son asociaciones, no composición. En cambio, cada reserva construye internamente un PlanAtencion específico. Su propiedad no tiene setter y los constructores no reciben planes prestados. Las hijas incorporan sus propias tareas y consultar_tareas() devuelve una tupla que protege la lista interna. Cancelar conserva la reserva y su plan. Python gestiona la memoria automáticamente; la composición se justifica por la creación y propiedad conceptual, sin implementar un destructor ni prometer destrucción forzada de referencias externas.
+
+## Evolución del diseño y apoyo de IA
+
+El diseño se construyó en cinco partes, con una ampliación de la quinta. Cliente y Mesa establecieron las validaciones básicas. Reserva y PlanAtencion incorporaron abstracción y composición; las tres hijas concretaron las duraciones aprobadas y sus tareas. En la Parte 4 se reemplazó el ValueError provisional por exceso de capacidad por CapacidadExcedidaError y se implementó el control de disponibilidad.
+
+La primera versión de main.py era una demostración automática. El integrante solicitó que el principal permitiera operar el sistema, por lo que se aprobó y agregó un menú con registro, creación, consulta, listado, cancelación y disponibilidad. El ejemplo automático se conservó como opción 8 en ejecutar_demostracion(), con un restaurante separado para no modificar los registros del usuario. Las clases del dominio se reutilizaron sin trasladar sus reglas a la interfaz.
+
+Se utilizó ChatGPT/Codex para analizar la guía, proponer clases y etapas, escribir código, ampliar comentarios línea por línea, revisar errores y ejecutar comprobaciones. Las principales correcciones solicitadas por el integrante fueron documentar cada instrucción, reducir el README, exigir aprobación antes de publicar y ampliar el principal con el menú. La declaración detallada y las conclusiones se integrarán en el Documento de Decisiones de Diseño después de recibir la plantilla. La ejecución de pruebas por la herramienta no demuestra por sí sola la comprensión del integrante.
 
 ## Contenido obligatorio del documento de decisiones
 
-La versión final tendrá portada con el título del proyecto, institución, asignatura y único integrante; los datos adicionales del curso o docente solo se añadirán si se suministran. Incluirá una introducción sobre el problema y propósito, una descripción de la solución y secciones narrativas relacionadas entre sí. No será un cuestionario de respuestas aisladas.
+El documento se creará usando la plantilla que suministrará Diego. No se ha generado un documento sustituto. Debe tener portada con el título del proyecto, institución, asignatura y único integrante; los datos adicionales del curso o docente solo se añadirán si se suministran. Incluirá una introducción sobre el problema y propósito, una descripción de la solución y secciones narrativas relacionadas entre sí. No será un cuestionario de respuestas aisladas.
 
 El desarrollo explicará el problema específico, las clases y responsabilidades, la elección de la clase abstracta y por qué no se instancia, la relación “es un”, los atributos y métodos compartidos, los datos y comportamientos particulares, y los dos métodos sobrescritos con sus diferencias. Vinculará el polimorfismo a la colección y al ciclo reales de main.py, justificará la composición e identificará la situación que controla cada excepción.
 
@@ -84,8 +92,10 @@ El uso de IA está permitido por la guía, pero debe declararse y no sustituye l
 
 ## Comprobaciones y entrega final
 
-Cada etapa tendrá una explicación comprensible y una verificación proporcional al avance. Al integrar el sistema se comprobarán reservas válidas, capacidad exacta y excedida, cruces de horarios, horarios consecutivos sin cruce, cancelación que libera disponibilidad y búsqueda inexistente. También se verificará la abstracción, la colección polimórfica, el encapsulamiento y la propiedad exclusiva de los planes.
+Durante las partes se comprobaron las validaciones de Cliente y Mesa, la abstracción de Reserva, la independencia de planes, los datos particulares de las hijas, las ramas de decoración y equipo, los cruces y límites de horarios, la cancelación y las tres excepciones. La ampliación del menú se comprobó mediante sesiones simuladas que incluyeron los tres tipos de reserva, datos inválidos, duplicados, cancelación, disponibilidad y ejecución repetida de la demostración sin alterar los registros interactivos.
 
-El principal debe terminar de manera normal después de mostrar los tres casos excepcionales. Antes de entregar se ejecutará el proyecto desde una copia limpia y se revisará que las instrucciones del README coincidan con lo probado. El UML y el documento técnico deberán representar el código final, no solo esta propuesta.
+La revisión de cierre ejecutó el programa desde una copia temporal sin metadatos Git ni cachés. Se comprobaron el menú, la creación de los tres tipos, los errores de capacidad y disponibilidad, la búsqueda inexistente, la cancelación, la liberación de horario y la demostración independiente. Los cuatro ejemplos de clases del README se ejecutaron en procesos separados y sus salidas coincidieron con las documentadas. También se cotejaron los nombres de clases y métodos con el UML y la presencia de comentarios por instrucción. No se modificó el código durante esta revisión.
 
-La guía no fija versión de Python, interfaz gráfica, persistencia, formato del documento técnico, campos adicionales del README ni fecha de entrega en el contenido revisado. Se propone consola y memoria por suficiencia académica; estas son decisiones del proyecto, no requisitos de la actividad.
+Las comprobaciones de las partes y del cierre se ejecutaron en el entorno de desarrollo; no se incluye una suite persistente de pruebas en el repositorio. El documento técnico y la revisión de sus páginas permanecen pendientes de la plantilla. La entrega completa no se considera terminada mientras falte ese documento y la verificación de publicación y participación en GitHub.
+
+La guía no fija versión de Python, interfaz gráfica, persistencia, formato del documento técnico, campos adicionales del README ni fecha de entrega en el contenido revisado. Se eligieron Python 3.12.14, consola y memoria como decisiones del proyecto. La publicación de archivos y cualquier nuevo commit requieren autorización; esta revisión documental local no los realiza.

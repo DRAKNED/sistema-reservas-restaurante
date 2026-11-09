@@ -1,10 +1,10 @@
 # Sistema de Reservas y Atención de Restaurante
 
-Proyecto final de Programación I de la Universidad de Manizales. El sistema permitirá organizar reservas, asignar mesas y determinar la preparación necesaria para atender reservas habituales, celebraciones y reuniones corporativas.
+Proyecto final de Programación I de la Universidad de Manizales. El sistema organiza reservas, asigna mesas y determina la preparación necesaria para atender reservas habituales, celebraciones y reuniones corporativas.
 
 **Único integrante:** Diego Andrés Echeverry Giraldo.
 
-**Avance actual: Parte 5 ampliada — Menú interactivo y demostración académica.** El sistema permite gestionar reservas desde main.py y ejecutar una demostración independiente como opción del menú. La documentación definitiva y la revisión integral corresponden a la versión final.
+**Avance actual: preparación de la versión final.** El menú interactivo y la demostración académica están implementados. El UML y la matriz de requisitos se actualizaron al código actual. El Documento de Decisiones de Diseño está pendiente de la plantilla que suministrará el integrante.
 
 ## Problema y alcance
 
@@ -12,13 +12,13 @@ El restaurante necesita evitar reservas simultáneas de una misma mesa, respetar
 
 La aplicación de consola en Python mantiene datos en memoria y ofrece un menú para administrar clientes, mesas y reservas. Permite registrar, consultar, listar y cancelar reservas, consultar disponibilidad y mostrar la preparación y duración de cada reserva. También incluye casos de demostración reproducibles. No necesita una base de datos, una interfaz gráfica ni servicios externos.
 
-## Diseño propuesto
+## Diseño implementado
 
 La clase abstracta `Reserva` reúne la información común: identificador, cliente, mesa, fecha y hora de inicio, cantidad de personas y estado. Las clases concretas `ReservaHabitual`, `ReservaCelebracion` y `ReservaCorporativa` implementan los métodos `calcular_duracion()` y `describir_preparacion()` con comportamientos propios.
 
 Las otras clases concretas son `Cliente`, `Mesa`, `PlanAtencion` y `Restaurante`. En total se implementan siete clases concretas y una abstracta, sin contar las excepciones personalizadas. Cada reserva crea y es propietaria de su `PlanAtencion`, que contiene las tareas necesarias para atenderla.
 
-Consulta el [análisis completo y la matriz de requisitos](docs/ANALISIS.md) y el [borrador UML](docs/UML.md).
+Consulta el [análisis completo y la matriz de requisitos](docs/ANALISIS.md) y el [diagrama UML de las clases implementadas](docs/UML.md).
 
 ## Parte 1 — Clientes y mesas
 
@@ -186,7 +186,7 @@ Al terminar la demostración quedan tres reservas de ejemplo registradas: dos ac
 | Parte 3 | Tres reservas especializadas y dos métodos sobrescritos en cada una | Implementada localmente |
 | Parte 4 | Restaurante, disponibilidad y excepciones del dominio | Implementada localmente |
 | Parte 5 ampliada | main.py, menú interactivo y demostración normal y excepcional | Implementada localmente |
-| Versión final | UML actualizado, documento de decisiones y revisión de entrega | Pendiente |
+| Versión final | UML actualizado, documento de decisiones y revisión de entrega | En preparación; pendiente el documento de decisiones con la plantilla del integrante |
 
 Las entregas serán acumulativas: se conservará una sola estructura de carpetas y cada parte agregará los cambios sobre la anterior. El historial de commits conservará las versiones; no se duplicará el proyecto en carpetas llamadas Parte 1, Parte 2, etc. Este README se actualizará en cada entrega.
 
