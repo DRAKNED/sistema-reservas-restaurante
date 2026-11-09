@@ -4,7 +4,7 @@ Proyecto final de Programación I de la Universidad de Manizales. El sistema per
 
 **Único integrante:** Diego Andrés Echeverry Giraldo.
 
-**Avance actual: Parte 3 — Tipos de reserva y métodos sobrescritos.** Se incorporaron las reservas habituales, de celebración y corporativas, cada una con su duración y preparación. La gestión de disponibilidad y el programa principal siguen pendientes.
+**Avance actual: Parte 4 — Gestión de reservas y excepciones personalizadas.** Se incorporaron el registro del restaurante, la disponibilidad por horario y las tres excepciones del dominio. El programa principal sigue previsto para la Parte 5.
 
 ## Problema y alcance
 
@@ -16,7 +16,7 @@ La primera versión será una aplicación de consola en Python, con datos en mem
 
 La clase abstracta `Reserva` reúne la información común: identificador, cliente, mesa, fecha y hora de inicio, cantidad de personas y estado. Las clases concretas `ReservaHabitual`, `ReservaCelebracion` y `ReservaCorporativa` implementan los métodos `calcular_duracion()` y `describir_preparacion()` con comportamientos propios.
 
-Las otras clases concretas serán `Cliente`, `Mesa`, `PlanAtencion` y `Restaurante`. En total se proponen siete clases concretas y una abstracta, sin contar las excepciones personalizadas. Cada reserva creará y será propietaria de su `PlanAtencion`, que contendrá las tareas necesarias para atenderla.
+Las otras clases concretas son `Cliente`, `Mesa`, `PlanAtencion` y `Restaurante`. En total se implementan siete clases concretas y una abstracta, sin contar las excepciones personalizadas. Cada reserva crea y es propietaria de su `PlanAtencion`, que contiene las tareas necesarias para atenderla.
 
 Consulta el [análisis completo y la matriz de requisitos](docs/ANALISIS.md) y el [borrador UML](docs/UML.md).
 
@@ -34,7 +34,7 @@ Esta entrega aplica constructores, encapsulamiento, propiedades de lectura, mét
 
 `Mesa` recibe número y capacidad enteros positivos y una ubicación de texto no vacía. `admite(personas)` devuelve `True` si una cantidad válida cabe, incluida la capacidad exacta, y `False` si supera la capacidad. No comprueba disponibilidad por horario.
 
-Los textos se guardan sin espacios externos. Los tipos incorrectos generan `TypeError`; los textos vacíos y números no positivos, `ValueError`. No se aceptan booleanos como cantidades. Estas son excepciones estándar: las excepciones personalizadas se implementarán en una parte posterior.
+Los textos se guardan sin espacios externos. Los tipos incorrectos generan `TypeError`; los textos vacíos y números no positivos, `ValueError`. No se aceptan booleanos como cantidades. Estas validaciones de Cliente y Mesa utilizan excepciones estándar; la Parte 4 agrega las excepciones del dominio de reservas.
 
 Los atributos internos usan doble guion bajo y se consultan mediante propiedades sin setters. La reasignación directa a estas propiedades genera `AttributeError`. El doble guion bajo dificulta accesos accidentales; no constituye una barrera de seguridad. El método estático interno de Mesa reutiliza la validación de enteros positivos.
 
@@ -51,7 +51,7 @@ Esta entrega agrega dos archivos documentados línea por línea y conserva las c
 
 `Reserva` hereda de `ABC` y utiliza `@abstractmethod` para exigir los métodos `calcular_duracion()` y `describir_preparacion()`. No se puede instanciar directamente ni crear una hija que deje alguno de estos métodos sin implementar. Las tres especializaciones se incorporan en la Parte 3.
 
-Su constructor recibe `identificador`, `cliente`, `mesa`, `inicio` y `personas`. El código debe ser un texto no vacío, cliente y mesa deben ser objetos de sus clases correspondientes, el inicio debe ser un `datetime` y las personas deben ser una cantidad entera positiva que no supere la capacidad. Se reutiliza `Mesa.admite()` para validar esta cantidad. Por ahora, exceder la capacidad genera `ValueError`; se reemplazará por `CapacidadExcedidaError` en la Parte 4.
+Su constructor recibe `identificador`, `cliente`, `mesa`, `inicio` y `personas`. El código debe ser un texto no vacío, cliente y mesa deben ser objetos de sus clases correspondientes, el inicio debe ser un `datetime` y las personas deben ser una cantidad entera positiva que no supere la capacidad. Se reutiliza `Mesa.admite()` para validar esta cantidad. Desde la Parte 4, exceder la capacidad genera `CapacidadExcedidaError`.
 
 Las propiedades de lectura son `identificador`, `cliente`, `mesa`, `inicio`, `personas`, `estado` y `plan_atencion`. Las asociaciones conservan los objetos Cliente y Mesa existentes; no los duplican. El estado inicial es `activa`; `cancelar()` lo cambia a `cancelada` y puede repetirse sin producir otro cambio. El estado no implica que la reserva ya esté registrada en un restaurante.
 
@@ -63,7 +63,7 @@ Cada reserva crea internamente un `PlanAtencion()` vacío y exclusivo. No recibe
 
 `agregar_tarea(tarea)` acepta texto no vacío, elimina sus espacios externos y conserva el orden de incorporación. `consultar_tareas()` devuelve una tupla con las tareas actuales: quien consulta no recibe la lista mutable interna. Dos reservas mantienen planes y listas independientes. Cancelar una reserva conserva su plan como parte de sus datos.
 
-Las tareas concretas se agregan desde las clases especializadas de la Parte 3. La disponibilidad de horarios se incorporará con Restaurante en la Parte 4.
+Las tareas concretas se agregan desde las clases especializadas de la Parte 3. La disponibilidad de horarios se administra mediante Restaurante desde la Parte 4.
 
 ## Parte 3 — Tipos de reserva y métodos sobrescritos
 
@@ -88,6 +88,49 @@ Las visitas habituales incluyen preparación de mesa y consulta de la preferenci
 
 Las condiciones sobre decoración o equipo evalúan datos del objeto. El código que utiliza una colección de reservas no necesita seleccionar métodos con condicionales según la clase: cada objeto responde con su propia implementación. La demostración definitiva de esta colección en main.py se incorporará en la Parte 5.
 
+## Parte 4 — Gestión de reservas y excepciones personalizadas
+
+Esta entrega agrega Restaurante y las tres excepciones personalizadas. También actualiza Reserva para distinguir el exceso de capacidad con la excepción del dominio. El código continúa documentado línea por línea.
+
+| Archivo | Contenido incorporado |
+| --- | --- |
+| `restaurante/restaurante.py` | Registro de clientes, mesas y reservas; búsqueda, cancelación y disponibilidad por intervalos. |
+| `restaurante/excepciones.py` | MesaNoDisponibleError, CapacidadExcedidaError y ReservaNoEncontradaError, derivadas de Exception. |
+| `restaurante/reserva.py` | Uso de CapacidadExcedidaError al construir una reserva que supera la capacidad. |
+
+### Registro y consultas
+
+`Restaurante(nombre)` valida un nombre de texto no vacío y crea tres diccionarios internos independientes. Los clientes se identifican por su código, las mesas por su número y las reservas por su código. Las propiedades de lectura `clientes`, `mesas` y `reservas` devuelven tuplas de los objetos registrados, sin exponer los diccionarios. La propiedad `nombre` permite consultar el nombre limpio.
+
+| Método | Operación |
+| --- | --- |
+| `registrar_cliente(cliente)` | Registra un Cliente cuyo identificador no esté utilizado. |
+| `registrar_mesa(mesa)` | Registra una Mesa cuyo número no esté utilizado. |
+| `registrar_reserva(reserva)` | Comprueba el código, las referencias registradas, el estado activo y la disponibilidad antes de guardar. |
+| `buscar_reserva(identificador)` | Devuelve una reserva activa o cancelada; elimina espacios externos del código consultado. |
+| `cancelar_reserva(identificador)` | Busca la reserva y cambia su estado a cancelada, conservando su registro. |
+| `consultar_disponibilidad(mesa, inicio, duracion)` | Devuelve True si ninguna reserva activa de esa mesa se cruza con el intervalo solicitado. |
+
+Los registros duplicados generan `ValueError`, incluso si se intenta registrar dos veces el mismo objeto. Un código de reserva cancelada no puede reutilizarse. El cliente y la mesa de una reserva deben ser exactamente los objetos registrados; una instancia diferente con el mismo código o número no sustituye al registro. Tampoco se registra una reserva que ya esté cancelada. La reserva solo se guarda cuando todas las comprobaciones son exitosas.
+
+### Disponibilidad por horario
+
+Los horarios se expresan mediante `datetime` locales sin zona horaria adjunta. La duración debe ser un `timedelta` positivo. Se rechazan tipos incorrectos, duraciones no positivas, mesas no registradas, fechas con zona horaria adjunta y finales fuera del rango de fechas admitido por Python.
+
+Los intervalos incluyen el inicio y excluyen el final. Dos reservas se cruzan cuando el inicio de cada una es anterior al final de la otra. Por ejemplo, una reserva de 12:00 a 13:30 permite otra a partir de las 13:30. Las reservas activas de otras mesas no interfieren; las canceladas no ocupan horario. Al cancelar se libera la disponibilidad, pero el registro y su plan de atención se conservan. Repetir una cancelación no produce otro cambio.
+
+El restaurante obtiene las duraciones con `calcular_duracion()` sin seleccionar métodos según el tipo concreto de reserva. La consulta de disponibilidad no modifica registros ni crea reservas.
+
+### Excepciones del dominio
+
+| Excepción | Situación y método responsable |
+| --- | --- |
+| `CapacidadExcedidaError` | El constructor de Reserva detecta que las personas superan la capacidad de la mesa. |
+| `MesaNoDisponibleError` | registrar_reserva() detecta un cruce de horario en la mesa solicitada. |
+| `ReservaNoEncontradaError` | buscar_reserva() no encuentra un código válido; cancelar_reserva() reutiliza esa búsqueda. |
+
+Las tres heredan directamente de `Exception`. Los datos mal formados y registros duplicados mantienen `TypeError` o `ValueError`. La captura explícita de cada excepción y la continuidad del programa se demostrarán en main.py en la Parte 5.
+
 ## Entregas por partes
 
 | Entrega | Resultado verificable | Estado |
@@ -95,7 +138,7 @@ Las condiciones sobre decoración o equipo evalúan datos del objeto. El código
 | Parte 1 | Cliente, Mesa, validaciones, comentarios línea por línea y README | Implementada localmente |
 | Parte 2 | Reserva abstracta y PlanAtencion con composición | Implementada localmente |
 | Parte 3 | Tres reservas especializadas y dos métodos sobrescritos en cada una | Implementada localmente |
-| Parte 4 | Restaurante, disponibilidad y excepciones del dominio | Pendiente |
+| Parte 4 | Restaurante, disponibilidad y excepciones del dominio | Implementada localmente |
 | Parte 5 | main.py, demostración normal y excepcional, y verificaciones | Pendiente |
 | Versión final | UML actualizado, documento de decisiones y revisión de entrega | Pendiente |
 
@@ -105,7 +148,7 @@ Antes de implementar cada parte se presentarán sus archivos y alcance para apro
 
 ## Ejecución
 
-Las Partes 1, 2 y 3 utilizan **Python 3.12.14** y no requieren paquetes externos. Todavía no existe `main.py`; se añadirá en la Parte 5. Por ahora las clases se pueden comprobar desde el intérprete.
+Las Partes 1 a 4 utilizan **Python 3.12.14** y no requieren paquetes externos. Todavía no existe `main.py`; se añadirá en la Parte 5. Por ahora las clases se pueden comprobar desde el intérprete.
 
 Abre una terminal en la carpeta raíz del proyecto y ejecuta:
 
@@ -213,4 +256,57 @@ Salida esperada:
 1:15:00
 ```
 
-También puedes consultar `habitual.describir_preparacion()`, `celebracion.describir_preparacion()` y `corporativa.describir_preparacion()` para observar sus descripciones particulares. Crear estos objetos todavía no registra las reservas ni comprueba disponibilidad de horarios; esa gestión corresponde a la Parte 4.
+También puedes consultar `habitual.describir_preparacion()`, `celebracion.describir_preparacion()` y `corporativa.describir_preparacion()` para observar sus descripciones particulares. Crear estos objetos por sí solo no registra las reservas ni comprueba disponibilidad; es necesario agregarlos a un Restaurante.
+
+Para utilizar el registro y comprobar que cancelar libera un horario, introduce este ejemplo completo en el intérprete:
+
+```python
+# Importa los tipos de inicio y duración del intervalo.
+from datetime import datetime, timedelta
+# Importa el cliente que se registrará en el restaurante.
+from restaurante.cliente import Cliente
+# Importa la mesa que se registrará en el restaurante.
+from restaurante.mesa import Mesa
+# Importa la especialización utilizada en este ejemplo.
+from restaurante.reserva_habitual import ReservaHabitual
+# Importa la entidad que administra los registros y horarios.
+from restaurante.restaurante import Restaurante
+# Crea el restaurante con registros inicialmente vacíos.
+restaurante = Restaurante("Restaurante de Diego")
+# Crea el cliente de la demostración.
+cliente = Cliente("CLI-001", "Diego Andrés Echeverry Giraldo")
+# Crea una mesa para cuatro personas.
+mesa = Mesa(1, 4, "Terraza")
+# Incorpora al cliente al registro del restaurante.
+restaurante.registrar_cliente(cliente)
+# Incorpora la mesa al registro del restaurante.
+restaurante.registrar_mesa(mesa)
+# Define una fecha y hora local sin zona adjunta.
+inicio = datetime(2026, 11, 15, 12, 0)
+# Construye una reserva habitual de 90 minutos con los objetos registrados.
+reserva = ReservaHabitual("RES-001", cliente, mesa, inicio, 2, "Terraza")
+# Comprueba que la mesa esté libre antes del registro.
+print(restaurante.consultar_disponibilidad(mesa, inicio, timedelta(minutes=90)))
+# Registra la reserva después de comprobar su disponibilidad.
+restaurante.registrar_reserva(reserva)
+# Comprueba que el mismo intervalo ya esté ocupado.
+print(restaurante.consultar_disponibilidad(mesa, inicio, timedelta(minutes=90)))
+# Consulta la reserva mediante su código.
+print(restaurante.buscar_reserva("RES-001").identificador)
+# Cancela la reserva conservando su registro.
+restaurante.cancelar_reserva("RES-001")
+# Comprueba que la cancelación haya liberado el horario.
+print(restaurante.consultar_disponibilidad(mesa, inicio, timedelta(minutes=90)))
+# Consulta el estado que conserva la reserva cancelada.
+print(restaurante.buscar_reserva("RES-001").estado)
+```
+
+Salida esperada:
+
+```text
+True
+False
+RES-001
+True
+cancelada
+```

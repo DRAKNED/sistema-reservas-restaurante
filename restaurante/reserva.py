@@ -7,6 +7,8 @@ from datetime import datetime, timedelta
 
 # Importa la entidad que identifica al cliente asociado con la reserva.
 from .cliente import Cliente
+# Importa la excepción del dominio que distingue el exceso de capacidad.
+from .excepciones import CapacidadExcedidaError
 # Importa la entidad que representa la mesa asignada.
 from .mesa import Mesa
 # Importa el objeto que formará parte de cada reserva por composición.
@@ -24,8 +26,8 @@ class Reserva(ABC):
 
         No invoca métodos abstractos durante la construcción. Las clases hijas
         inicializarán sus datos particulares y agregarán las tareas necesarias.
-        En esta parte, exceder la capacidad genera ValueError; la excepción
-        personalizada de capacidad se incorporará en la Parte 4.
+        Exceder la capacidad genera CapacidadExcedidaError. Otros datos
+        inválidos mantienen las excepciones estándar TypeError y ValueError.
         """
         # Verifica que el código de la reserva sea un texto.
         if not isinstance(identificador, str):
@@ -49,8 +51,8 @@ class Reserva(ABC):
             raise TypeError("El inicio de la reserva debe ser un objeto datetime.")
         # Reutiliza admite(), que valida el tipo y el valor positivo de personas.
         if not mesa.admite(personas):
-            # Rechaza el exceso de capacidad; se especializará esta excepción en la Parte 4.
-            raise ValueError("La cantidad de personas supera la capacidad de la mesa.")
+            # Distingue el exceso de capacidad mediante la excepción personalizada del dominio.
+            raise CapacidadExcedidaError("La cantidad de personas supera la capacidad de la mesa.")
 
         # Guarda el código limpio en un atributo interno de esta reserva.
         self.__identificador = identificador.strip()
@@ -58,7 +60,7 @@ class Reserva(ABC):
         self.__cliente = cliente
         # Conserva la referencia a la mesa, que puede utilizarse en otras reservas.
         self.__mesa = mesa
-        # Guarda la fecha y hora recibidas; la disponibilidad se comprobará en la Parte 4.
+        # Guarda el inicio recibido; Restaurante comprobará su convención local y disponibilidad.
         self.__inicio = inicio
         # Almacena la cantidad de personas después de validar la capacidad.
         self.__personas = personas
