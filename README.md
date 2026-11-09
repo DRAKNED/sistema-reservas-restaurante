@@ -4,13 +4,13 @@ Proyecto final de Programación I de la Universidad de Manizales. El sistema per
 
 **Único integrante:** Diego Andrés Echeverry Giraldo.
 
-**Avance actual: Parte 4 — Gestión de reservas y excepciones personalizadas.** Se incorporaron el registro del restaurante, la disponibilidad por horario y las tres excepciones del dominio. El programa principal sigue previsto para la Parte 5.
+**Avance actual: Parte 5 — Programa principal y demostración completa.** El sistema ya se puede ejecutar desde main.py para observar casos normales, polimorfismo y las tres excepciones personalizadas. La documentación definitiva y la revisión integral corresponden a la versión final.
 
 ## Problema y alcance
 
 El restaurante necesita evitar reservas simultáneas de una misma mesa, respetar su capacidad y comunicar qué debe prepararse antes de la llegada de los clientes. Una celebración puede necesitar decoración y una reunión corporativa puede requerir equipo audiovisual; una reserva habitual necesita una preparación básica.
 
-La primera versión será una aplicación de consola en Python, con datos en memoria y casos de demostración reproducibles. Administrará clientes, mesas y reservas. Permitirá registrar, consultar y cancelar reservas, y mostrar la preparación y duración de cada una. No necesita una base de datos, una interfaz gráfica ni servicios externos para demostrar los requisitos académicos.
+La aplicación de consola en Python mantiene datos en memoria y ejecuta casos de demostración reproducibles. Administra clientes, mesas y reservas. Permite registrar, consultar y cancelar reservas, y mostrar la preparación y duración de cada una. No necesita una base de datos, una interfaz gráfica ni servicios externos para demostrar los requisitos académicos.
 
 ## Diseño propuesto
 
@@ -86,7 +86,7 @@ Cada clase sobrescribe los dos métodos exigidos por Reserva:
 
 Las visitas habituales incluyen preparación de mesa y consulta de la preferencia de ubicación, sin garantizar que dicha preferencia cambie la mesa asignada. Las celebraciones incluyen organización según el motivo y decoración cuando se solicita. Las reuniones incluyen organización según sus minutos y preparación de equipo cuando se requiere.
 
-Las condiciones sobre decoración o equipo evalúan datos del objeto. El código que utiliza una colección de reservas no necesita seleccionar métodos con condicionales según la clase: cada objeto responde con su propia implementación. La demostración definitiva de esta colección en main.py se incorporará en la Parte 5.
+Las condiciones sobre decoración o equipo evalúan datos del objeto. El código que utiliza una colección de reservas no necesita seleccionar métodos con condicionales según la clase: cada objeto responde con su propia implementación. La Parte 5 demuestra esta colección en main.py.
 
 ## Parte 4 — Gestión de reservas y excepciones personalizadas
 
@@ -129,7 +129,27 @@ El restaurante obtiene las duraciones con `calcular_duracion()` sin seleccionar 
 | `MesaNoDisponibleError` | registrar_reserva() detecta un cruce de horario en la mesa solicitada. |
 | `ReservaNoEncontradaError` | buscar_reserva() no encuentra un código válido; cancelar_reserva() reutiliza esa búsqueda. |
 
-Las tres heredan directamente de `Exception`. Los datos mal formados y registros duplicados mantienen `TypeError` o `ValueError`. La captura explícita de cada excepción y la continuidad del programa se demostrarán en main.py en la Parte 5.
+Las tres heredan directamente de `Exception`. Los datos mal formados y registros duplicados mantienen `TypeError` o `ValueError`. La Parte 5 captura explícitamente cada excepción en main.py y ejecuta una operación válida después de cada caso.
+
+## Parte 5 — Programa principal y demostración completa
+
+El archivo `main.py`, ubicado en la raíz del proyecto, ejecuta una demostración automática documentada línea por línea. No solicita entradas ni ofrece un menú interactivo. La función `main()` crea datos nuevos en cada ejecución y el bloque `if __name__ == "__main__"` evita que la demostración se ejecute al importar el archivo.
+
+Se crean inicialmente ocho objetos del dominio: un Restaurante, dos clientes, dos mesas y tres reservas de tipos diferentes. Cada reserva crea además su propio PlanAtencion. El segundo cliente es ficticio y se identifica como Cliente de ejemplo.
+
+| Reserva | Tipo | Mesa | Personas | Horario del 15 de noviembre de 2026 |
+| --- | --- | --- | --- | --- |
+| RES-001 | Habitual, preferencia de terraza | 1, capacidad 4 | 2 | 12:00 a 13:30 |
+| RES-002 | Celebración de cumpleaños con decoración | 2, capacidad 8 | 6 | 14:00 a 16:30 |
+| RES-003 | Reunión de 60 minutos con equipo audiovisual | 2, capacidad 8 | 4 | 16:30 a 17:45 |
+
+Las fechas son fijas para obtener resultados reproducibles; no dependen de la fecha actual del equipo. Las reservas de celebración y reunión son consecutivas en la misma mesa y demuestran que se admite la igualdad entre un final y el siguiente inicio.
+
+La lista `reservas` contiene las tres especializaciones. Un único ciclo registra cada reserva e invoca tanto `calcular_duracion()` como `describir_preparacion()`, sin condicionales por tipo de objeto. Se muestran el horario, la duración y la preparación correspondiente. También se realiza una búsqueda válida.
+
+La demostración provoca tres situaciones anormales y captura cada excepción por separado: intenta crear una reserva de cinco personas para la mesa de cuatro, registrar una reserva que se cruza con RES-001 y cancelar un identificador inexistente. Después de los dos primeros casos realiza búsquedas exitosas. Después del tercero cancela RES-001 y comprueba que su horario quedó libre.
+
+Al terminar quedan tres reservas registradas: dos activas y una cancelada. Los intentos rechazados no se incorporan al registro. El programa muestra el estado conservado de la reserva cancelada y un mensaje de finalización. Los datos no se guardan al cerrar el proceso.
 
 ## Entregas por partes
 
@@ -139,7 +159,7 @@ Las tres heredan directamente de `Exception`. Los datos mal formados y registros
 | Parte 2 | Reserva abstracta y PlanAtencion con composición | Implementada localmente |
 | Parte 3 | Tres reservas especializadas y dos métodos sobrescritos en cada una | Implementada localmente |
 | Parte 4 | Restaurante, disponibilidad y excepciones del dominio | Implementada localmente |
-| Parte 5 | main.py, demostración normal y excepcional, y verificaciones | Pendiente |
+| Parte 5 | main.py, demostración normal y excepcional, y verificaciones | Implementada localmente |
 | Versión final | UML actualizado, documento de decisiones y revisión de entrega | Pendiente |
 
 Las entregas serán acumulativas: se conservará una sola estructura de carpetas y cada parte agregará los cambios sobre la anterior. El historial de commits conservará las versiones; no se duplicará el proyecto en carpetas llamadas Parte 1, Parte 2, etc. Este README se actualizará en cada entrega.
@@ -148,7 +168,25 @@ Antes de implementar cada parte se presentarán sus archivos y alcance para apro
 
 ## Ejecución
 
-Las Partes 1 a 4 utilizan **Python 3.12.14** y no requieren paquetes externos. Todavía no existe `main.py`; se añadirá en la Parte 5. Por ahora las clases se pueden comprobar desde el intérprete.
+El proyecto utiliza **Python 3.12.14** y no requiere paquetes externos.
+
+Abre una terminal en la carpeta raíz del proyecto, donde se encuentra main.py, y ejecuta:
+
+```powershell
+python main.py
+```
+
+La salida muestra las tres reservas, las duraciones 1:30:00, 2:30:00 y 1:15:00, sus preparaciones, los tres errores controlados y una operación exitosa posterior a cada uno. Finaliza con estas líneas:
+
+```text
+RESULTADO FINAL
+Reservas registradas: 3 (2 activas y 1 cancelada).
+Demostración finalizada correctamente.
+```
+
+### Ejemplos desde el intérprete
+
+También puedes explorar las clases por separado. Los siguientes ejemplos son independientes y no necesitan ejecutar main.py.
 
 Abre una terminal en la carpeta raíz del proyecto y ejecuta:
 
